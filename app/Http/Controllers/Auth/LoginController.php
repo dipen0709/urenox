@@ -55,23 +55,7 @@ use AuthenticatesUsers;
         if ($email && $password) {
             if (Auth::attempt(['email' => $email, 'password' => $password])) {
                 $users = Auth::user();
-                if ($users->status == 1) {
-                    //set site languages
-                    $site_languages = Language::select("id", "language_name", "language_code", "order_num")->where(['status' => '1'])->orderBy("order_num")->get()->toArray();
-                    Session::put('site_languages', $site_languages);
-
-                    //set default language
-                    $default_lang = Language::where('id', $users->language_id)->first();
-                    if (!empty($default_lang)) {
-                        Session::put('lang_id', $default_lang->id);
-                        Session::put('lang_name', $default_lang->language_name);
-                        Session::put('lang_code', $default_lang->language_code);
-                    }
-                    return redirect()->route('dashboard');
-                } else {
-                    Auth::logout();
-                    return redirect()->route('loginpage')->with('error', trans('common.label_common_status_inactive'));
-                }
+                return redirect()->route('dashboard');
             } else {
                 return redirect()->route('loginpage')->with('error', trans('auth.failed'));
             }
